@@ -17,6 +17,10 @@ def nanagogo_download(url, output_dir='.', merge=True, info_only=False, **kwargs
     info = json.loads(get_content(api_url))
 
     items = []
+    if info['data']['posts']['post'] is None:
+        return
+    if info['data']['posts']['post']['body'] is None:
+        return
     for i in info['data']['posts']['post']['body']:
         if 'image' in i:
             image_url = i['image']
@@ -35,6 +39,7 @@ def nanagogo_download(url, output_dir='.', merge=True, info_only=False, **kwargs
                           'size':  size})
 
     size = sum([i['size'] for i in items])
+    if size == 0: return # do not fail the whole process
     print_info(site_info, title, ext, size)
     if not info_only:
         for i in items:
